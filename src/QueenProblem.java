@@ -1,8 +1,11 @@
-public class Main {
+import java.util.ArrayList;
+
+public class QueenProblem {
     private static int insertCounter = 0;
+    private static ArrayList<int[][]> successfullBoards = new ArrayList<>();
 
     public static void main(String[] args) {
-        QueenFigure[][] gameBoard = new QueenFigure[8][8];
+        int[][] gameBoard = new int[8][8];
 
         printGameBoard(gameBoard);
 
@@ -16,14 +19,20 @@ public class Main {
 
         System.out.println("Insert counter: " + insertCounter);
         System.out.println("In-time: " + elapsedTimeMillis + " ms");
+        System.out.println("Number of Boards from list: " + successfullBoards.size());
+
+        for(int[][] board : successfullBoards) {
+            printGameBoard(board);
+            System.out.println("\n");
+        }
     }
 
-    static void printGameBoard(QueenFigure[][] gameBoard) {
+    static void printGameBoard(int[][] gameBoard) {
         for(int riadok = 0; riadok < gameBoard.length; riadok++) {
             System.out.print((8-riadok) + " ");
             for(int stlpec = 0; stlpec < gameBoard[riadok].length; stlpec++) {
-                if(gameBoard[riadok][stlpec] != null) {
-                    System.out.print(" " + gameBoard[riadok][stlpec].getImage() + " ");
+                if(gameBoard[riadok][stlpec] == 1) {
+                    System.out.print(" ♛ ");
                 }
                 else
                     System.out.print(" . ");
@@ -33,29 +42,57 @@ public class Main {
         System.out.println("   a  b  c  d  e  f  g  h ");
     }
 
-    static boolean insertQueen(QueenFigure[][] gameBoard, int queensCount, boolean successfull) {
+    static boolean insertQueen(int[][] gameBoard, int queensCount, boolean successfull) {
         if(!successfull) {
             for(int riadok = 0; riadok < gameBoard.length; riadok++) {
                 for(int stlpec = 0; stlpec < gameBoard[riadok].length; stlpec++) {
-                    QueenFigure queen = new QueenFigure(riadok, stlpec);
-                    if(hasCleanMoves(gameBoard, riadok, stlpec) && gameBoard[riadok][stlpec] == null) {
-                        gameBoard[riadok][stlpec] = queen;
-                        insertCounter++;
-                        // printGameBoard(gameBoard);
-                        queensCount++;
-                        // System.out.println("Queens counter: " + queensCount);
-                        if(queensCount < 8) {
-                            successfull = insertQueen(gameBoard, queensCount, false);
+                    if(gameBoard[riadok][stlpec] == 0) {
+                        if(hasCleanMoves(gameBoard, riadok, stlpec)) {
+                            gameBoard[riadok][stlpec] = 1;
+                            queensCount++;
+                            if(queensCount < 8) {
+                                successfull = insertQueen(gameBoard, queensCount, false);
 
-                            if(!successfull) {
-                                gameBoard[riadok][stlpec] = null;
-                                queensCount--;
+                                if(!successfull) {
+                                    gameBoard[riadok][stlpec] = 0;
+                                    queensCount--;
+                                }
+                                else
+                                    return true;
                             }
-                            else
-                                return true;
+                            else {
+                                for(int[][] board : successfullBoards) {
+                                    boolean equals = false;
+                                    for(int x = 0; x < board.length; x++) {
+                                        for (int y = 0; y < board[x].length; y++) {
+                                            if((board[x][y] == 0 && gameBoard[x][y] == 0) ||
+                                                    (board[x][y] == 1 && gameBoard[x][y] == 1)) {
+                                                equals = true;
+                                            }
+                                            else {
+                                                equals = false;
+                                                break;
+                                            }
+                                        }
+                                        if(!equals)
+                                            break;
+                                    }
+
+                                    if(equals) {
+                                        gameBoard[riadok][stlpec] = 0;
+                                        return false;
+                                    }
+                                }
+                                int[][] newBoard = new int[8][8];
+                                for(int x = 0; x < newBoard.length; x++) {
+                                    System.arraycopy(gameBoard[x], 0, newBoard[x], 0, newBoard[x].length);
+                                }
+
+                                successfullBoards.add(newBoard);
+                                gameBoard[riadok][stlpec] = 0;
+                                return false;
+                            }
                         }
-                        else
-                            return true;
                     }
                 }
             }
@@ -63,10 +100,10 @@ public class Main {
         return successfull;
     }
 
-    static boolean hasCleanMoves(QueenFigure[][] gameBoard, int queenRiadok, int queenStlpec) {
+    static boolean hasCleanMoves(int[][] gameBoard, int queenRiadok, int queenStlpec) {
         for(int riadok = 0; riadok < gameBoard.length; riadok++) {
             for(int stlpec = 0; stlpec < gameBoard[riadok].length; stlpec++) {
-                if(gameBoard[riadok][stlpec] != null) {
+                if(gameBoard[riadok][stlpec] == 1) {
                     if(queenRiadok == riadok || queenStlpec == stlpec) {
                         return false;
                     }
@@ -77,7 +114,7 @@ public class Main {
         return hasCleanDiagonal(gameBoard, queenRiadok, queenStlpec);
     }
 
-    static boolean hasCleanDiagonal(QueenFigure[][] gameBoard, int queenRiadok, int queenStlpec) {
+    static boolean hasCleanDiagonal(int[][] gameBoard, int queenRiadok, int queenStlpec) {
         int tempRiadok = queenRiadok;
         int tempStlpec = queenStlpec;
 
@@ -88,7 +125,7 @@ public class Main {
             tempRiadok--;
             tempStlpec++;
             if(tempRiadok >= 0 && tempStlpec < 8) {
-                if(gameBoard[tempRiadok][tempStlpec] != null) {
+                if(gameBoard[tempRiadok][tempStlpec] == 1) {
                     return false;
                 }
             }
@@ -107,7 +144,7 @@ public class Main {
             tempRiadok++;
             tempStlpec++;
             if(tempRiadok < 8 && tempStlpec < 8) {
-                if(gameBoard[tempRiadok][tempStlpec] != null) {
+                if(gameBoard[tempRiadok][tempStlpec] == 1) {
                     return false;
                 }
             }
@@ -126,7 +163,7 @@ public class Main {
             tempRiadok++;
             tempStlpec--;
             if(tempRiadok < 8 && tempStlpec >= 0) {
-                if(gameBoard[tempRiadok][tempStlpec] != null) {
+                if(gameBoard[tempRiadok][tempStlpec] == 1) {
                     return false;
                 }
             }
@@ -145,7 +182,7 @@ public class Main {
             tempRiadok--;
             tempStlpec--;
             if(tempRiadok >= 0 && tempStlpec >= 0) {
-                if(gameBoard[tempRiadok][tempStlpec] != null) {
+                if(gameBoard[tempRiadok][tempStlpec] == 1) {
                     return false;
                 }
             }
