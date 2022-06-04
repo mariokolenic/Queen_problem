@@ -2,10 +2,10 @@ import java.util.ArrayList;
 
 public class QueenProblem {
     private static int insertCounter = 0;
-    private static ArrayList<int[][]> successfullBoards = new ArrayList<>();
+    private static ArrayList<char[][]> successfullBoards = new ArrayList<>();
 
     public static void main(String[] args) {
-        int[][] gameBoard = new int[8][8];
+        char[][] gameBoard = new char[8][8];
 
         printGameBoard(gameBoard);
 
@@ -21,17 +21,17 @@ public class QueenProblem {
         System.out.println("In-time: " + elapsedTimeMillis + " ms");
         System.out.println("Number of Boards from list: " + successfullBoards.size());
 
-        for(int[][] board : successfullBoards) {
+        for(char[][] board : successfullBoards) {
             printGameBoard(board);
             System.out.println("\n");
         }
     }
 
-    static void printGameBoard(int[][] gameBoard) {
+    static void printGameBoard(char[][] gameBoard) {
         for(int riadok = 0; riadok < gameBoard.length; riadok++) {
             System.out.print((8-riadok) + " ");
             for(int stlpec = 0; stlpec < gameBoard[riadok].length; stlpec++) {
-                if(gameBoard[riadok][stlpec] == 1) {
+                if(gameBoard[riadok][stlpec] == '♛') {
                     System.out.print(" ♛ ");
                 }
                 else
@@ -42,13 +42,13 @@ public class QueenProblem {
         System.out.println("   a  b  c  d  e  f  g  h ");
     }
 
-    static boolean insertQueen(int[][] gameBoard, int queensCount, boolean successfull) {
+    static boolean insertQueen(char[][] gameBoard, int queensCount, boolean successfull) {
         if(!successfull) {
             for(int riadok = 0; riadok < gameBoard.length; riadok++) {
                 for(int stlpec = 0; stlpec < gameBoard[riadok].length; stlpec++) {
                     if(gameBoard[riadok][stlpec] == 0) {
                         if(hasCleanMoves(gameBoard, riadok, stlpec)) {
-                            gameBoard[riadok][stlpec] = 1;
+                            gameBoard[riadok][stlpec] = '♛';
                             queensCount++;
                             if(queensCount < 8) {
                                 successfull = insertQueen(gameBoard, queensCount, false);
@@ -61,12 +61,12 @@ public class QueenProblem {
                                     return true;
                             }
                             else {
-                                for(int[][] board : successfullBoards) {
+                                for(char[][] board : successfullBoards) {
                                     boolean equals = false;
                                     for(int x = 0; x < board.length; x++) {
                                         for (int y = 0; y < board[x].length; y++) {
                                             if((board[x][y] == 0 && gameBoard[x][y] == 0) ||
-                                                    (board[x][y] == 1 && gameBoard[x][y] == 1)) {
+                                                    (board[x][y] == '♛' && gameBoard[x][y] == '♛')) {
                                                 equals = true;
                                             }
                                             else {
@@ -83,7 +83,7 @@ public class QueenProblem {
                                         return false;
                                     }
                                 }
-                                int[][] newBoard = new int[8][8];
+                                char[][] newBoard = new char[8][8];
                                 for(int x = 0; x < newBoard.length; x++) {
                                     System.arraycopy(gameBoard[x], 0, newBoard[x], 0, newBoard[x].length);
                                 }
@@ -100,10 +100,10 @@ public class QueenProblem {
         return successfull;
     }
 
-    static boolean hasCleanMoves(int[][] gameBoard, int queenRiadok, int queenStlpec) {
+    static boolean hasCleanMoves(char[][] gameBoard, int queenRiadok, int queenStlpec) {
         for(int riadok = 0; riadok < gameBoard.length; riadok++) {
             for(int stlpec = 0; stlpec < gameBoard[riadok].length; stlpec++) {
-                if(gameBoard[riadok][stlpec] == 1) {
+                if(gameBoard[riadok][stlpec] == '♛') {
                     if(queenRiadok == riadok || queenStlpec == stlpec) {
                         return false;
                     }
@@ -114,7 +114,7 @@ public class QueenProblem {
         return hasCleanDiagonal(gameBoard, queenRiadok, queenStlpec);
     }
 
-    static boolean hasCleanDiagonal(int[][] gameBoard, int queenRiadok, int queenStlpec) {
+    static boolean hasCleanDiagonal(char[][] gameBoard, int queenRiadok, int queenStlpec) {
         int tempRiadok = queenRiadok;
         int tempStlpec = queenStlpec;
 
@@ -125,7 +125,7 @@ public class QueenProblem {
             tempRiadok--;
             tempStlpec++;
             if(tempRiadok >= 0 && tempStlpec < 8) {
-                if(gameBoard[tempRiadok][tempStlpec] == 1) {
+                if(gameBoard[tempRiadok][tempStlpec] == '♛') {
                     return false;
                 }
             }
@@ -144,7 +144,7 @@ public class QueenProblem {
             tempRiadok++;
             tempStlpec++;
             if(tempRiadok < 8 && tempStlpec < 8) {
-                if(gameBoard[tempRiadok][tempStlpec] == 1) {
+                if(gameBoard[tempRiadok][tempStlpec] == '♛') {
                     return false;
                 }
             }
@@ -163,7 +163,7 @@ public class QueenProblem {
             tempRiadok++;
             tempStlpec--;
             if(tempRiadok < 8 && tempStlpec >= 0) {
-                if(gameBoard[tempRiadok][tempStlpec] == 1) {
+                if(gameBoard[tempRiadok][tempStlpec] == '♛') {
                     return false;
                 }
             }
@@ -182,7 +182,7 @@ public class QueenProblem {
             tempRiadok--;
             tempStlpec--;
             if(tempRiadok >= 0 && tempStlpec >= 0) {
-                if(gameBoard[tempRiadok][tempStlpec] == 1) {
+                if(gameBoard[tempRiadok][tempStlpec] == '♛') {
                     return false;
                 }
             }
